@@ -18,7 +18,7 @@ namespace coteo.Domain.Repositories.EntityFramework
             _context.Orders.Remove(new Order() { Id = id });
         }
 
-        public Order GetOrderById(string id)
+        public Order? GetOrderById(string id)
         {
             return _context.Orders.FirstOrDefault(x => x.Id == id);
         }

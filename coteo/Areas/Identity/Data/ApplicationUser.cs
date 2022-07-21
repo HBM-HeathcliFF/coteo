@@ -22,6 +22,6 @@ public class ApplicationUser : IdentityUser
     [ForeignKey("DepartmentId")]
     public Department Department { get; set; }
 
-    public List<Order> MyOrders { get; set; } = new List<Order>();
-    public List<Order> IssuedToMeOrders { get; set; } = new List<Order>();
+    public List<Order> MyOrders { get; set; } = new();
+    public List<Order> IssuedToMeOrders { get; set; } = new();
 }

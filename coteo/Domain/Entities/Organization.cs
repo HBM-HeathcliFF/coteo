@@ -12,6 +12,6 @@ namespace coteo.Domain.Entities
         [ForeignKey("CreatorId")]
         public ApplicationUser Creator { get; set; }
 
-        public List<Department> Departments { get; set; } = new List<Department>();
+        public List<Department> Departments { get; set; } = new();
     }
 }

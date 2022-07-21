@@ -18,7 +18,7 @@ namespace coteo.Domain.Repositories.EntityFramework
             _context.Departments.Remove(new Department() { Id = id });
         }
 
-        public Department GetDepartmentById(string id)
+        public Department? GetDepartmentById(string id)
         {
             return _context.Departments.FirstOrDefault(x => x.Id == id);
         }

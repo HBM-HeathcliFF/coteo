@@ -18,7 +18,7 @@ namespace coteo.Domain.Repositories.EntityFramework
             _context.Organizations.Remove(new Organization() { Id = id });
         }
 
-        public Organization GetOrganizationById(string id)
+        public Organization? GetOrganizationById(string id)
         {
             return _context.Organizations.FirstOrDefault(x => x.Id == id);
         }
