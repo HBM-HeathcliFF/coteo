@@ -35,7 +35,7 @@ namespace coteo.Controllers
             var users = _dataManager.Users.GetUsers().Include(u => u.MyOrders).ToList();
             var user = users.FirstOrDefault(x => x.Id == _userManager.GetUserId(User));
 
-            return GetView(new List<UserRole> { UserRole.User, UserRole.Employee }, "/Home/Index", user.MyOrders);
+            return GetView(new List<UserRole> { UserRole.User, UserRole.Employee }, "/Home/Index", user?.MyOrders);
         }
 
         [HttpGet]
@@ -44,7 +44,7 @@ namespace coteo.Controllers
             var users = _dataManager.Users.GetUsers().Include(u => u.IssuedToMeOrders).ToList();
             var user = users.FirstOrDefault(x => x.Id == _userManager.GetUserId(User));
 
-            return GetView(new List<UserRole> { UserRole.User, UserRole.Creator }, "/Home/Index", user.IssuedToMeOrders);
+            return GetView(new List<UserRole> { UserRole.User, UserRole.Creator }, "/Home/Index", user?.IssuedToMeOrders);
         }
 
         [HttpGet]
@@ -65,7 +65,7 @@ namespace coteo.Controllers
             var organizationId = _dataManager.Users.GetUserById(_userManager.GetUserId(User)).OrganizationId;
             if (organizationId != null)
 			{
-                List<DepartmentInfoModel> departmentList = new List<DepartmentInfoModel>();
+                List<DepartmentInfoModel> departmentList = new();
                 var departments = _dataManager.Departments.GetDepartments().Where(x => x.OrganizationId == organizationId);
                 foreach (var department in departments)
                 {
@@ -107,12 +107,11 @@ namespace coteo.Controllers
             string userId = _userManager.GetUserId(User);
             UserRole userRole = _dataManager.Users.GetUserById(userId).Role;
 
-            if (userRole == UserRole.User)
+            var organization = _dataManager.Users.GetUserById(userId).Organization;
+            if (organization == null)
             {
                 return Redirect("/Home/NewOrganization");
             }
-
-            string organizationId = _dataManager.Users.GetUserById(userId).OrganizationId;
 
             ApplicationUser user = _dataManager.Users.GetUserById(userId);
             user.OrganizationId = null;
@@ -123,14 +122,14 @@ namespace coteo.Controllers
 
             if (userRole == UserRole.Creator)
             {
-                var users = _dataManager.Users.GetUsers().Where(x => x.OrganizationId == organizationId);
+                var users = _dataManager.Users.GetUsers().Where(x => x.OrganizationId == organization.Id);
                 foreach (var usr in users)
                 {
                     usr.OrganizationId = null;
                     usr.Role = UserRole.User;
                     _dataManager.Users.SaveUser(usr);
                 }
-                _dataManager.Organizations.DeleteOrganization(organizationId);
+                _dataManager.Organizations.DeleteOrganization(organization.Id);
             }
 
             _dataManager.SaveChanges();
@@ -171,11 +170,14 @@ namespace coteo.Controllers
             var user = _dataManager.Users.GetUsers().FirstOrDefault(x => x.FullName == model.LeaderFullName);
             var creator = _dataManager.Users.GetUsers().FirstOrDefault(x => x.Id == model.CreatorId);
 
-            if (user != null && creator != null && creator.OrganizationId == user.OrganizationId)
+            if (user != null &&
+                creator != null &&
+                user.OrganizationId != null &&
+                creator.OrganizationId == user.OrganizationId)
             {
                 if (_dataManager.Departments.GetDepartments().FirstOrDefault(x => x.LeaderId == user.Id) == null)
                 {
-                    Department department = new Department();
+                    Department department = new();
                     department.Name = model.DepartmentName;
                     department.Leader = user;
                     department.LeaderId = user.Id;
@@ -184,7 +186,7 @@ namespace coteo.Controllers
                     _dataManager.Departments.SaveDepartment(department);
                     _dataManager.SaveChanges();
 
-                    Department dep = _dataManager.Departments.GetDepartments().FirstOrDefault(x => x.LeaderId == user.Id);
+                    Department dep = _dataManager.Departments.GetDepartments().First(x => x.LeaderId == user.Id);
 
                     user.Role = UserRole.Leader;
                     user.DepartmentId = dep.Id;
@@ -217,7 +219,7 @@ namespace coteo.Controllers
 
             if (user != null && leader != null && leader.OrganizationId == user.OrganizationId)
             {
-                Department department = _dataManager.Departments.GetDepartments().FirstOrDefault(x => x.LeaderId == model.LeaderId);
+                Department department = _dataManager.Departments.GetDepartments().First(x => x.LeaderId == leader.Id);
 
                 if (user.DepartmentId == null)
                 {
@@ -255,7 +257,7 @@ namespace coteo.Controllers
                 createdById.OrganizationId == executor.OrganizationId &&
                 executor.DepartmentId == createdById.DepartmentId)
             {
-                Order order = new Order();
+                Order order = new();
                 order.Name = model.OrderName;
                 order.Text = model.Text;
                 order.CreationDate = DateTime.Now;
@@ -284,7 +286,7 @@ namespace coteo.Controllers
         public IActionResult MyOrders(OrderStatusModel model)
         {
             Order order = _dataManager.Orders.GetOrderById(model.Id);
-            order = SetStatus(order, model.Status);
+            order.SetStatus(model.Status);
 
             _dataManager.Orders.SaveOrder(order);
             _dataManager.SaveChanges();
@@ -292,14 +294,14 @@ namespace coteo.Controllers
             var users = _dataManager.Users.GetUsers().Include(u => u.MyOrders).ToList();
             var user = users.FirstOrDefault(x => x.Id == _userManager.GetUserId(User));
 
-            return GetView(new List<UserRole> { UserRole.User, UserRole.Employee }, "/Home/Index", user.MyOrders);
+            return GetView(new List<UserRole> { UserRole.User, UserRole.Employee }, "/Home/Index", user?.MyOrders);
         }
 
         [HttpPost]
         public IActionResult IssuedToMe(OrderStatusModel model)
         {
             Order order = _dataManager.Orders.GetOrderById(model.Id);
-            order = SetStatus(order, model.Status);
+            order.SetStatus(model.Status);
 
             _dataManager.Orders.SaveOrder(order);
             _dataManager.SaveChanges();
@@ -307,7 +309,7 @@ namespace coteo.Controllers
             var users = _dataManager.Users.GetUsers().Include(u => u.IssuedToMeOrders).ToList();
             var user = users.FirstOrDefault(x => x.Id == _userManager.GetUserId(User));
 
-            return GetView(new List<UserRole> { UserRole.User, UserRole.Creator }, "/Home/Index", user.IssuedToMeOrders);
+            return GetView(new List<UserRole> { UserRole.User, UserRole.Creator }, "/Home/Index", user?.IssuedToMeOrders);
         }
 
         [HttpPost]
@@ -360,37 +362,6 @@ namespace coteo.Controllers
 			{
                 return View(model);
             }
-        }
-
-        public Order SetStatus(Order order, OrderStatus newStatus)
-        {
-            if (order.Status != OrderStatus.Canceled &&
-                order.Status != OrderStatus.Completed &&
-                order.Status != OrderStatus.CompletedNotOnTime)
-            {
-                if (newStatus == OrderStatus.Completed)
-                {
-                    order.Performed = DateTime.Now;
-                }
-
-                if (order.Status == OrderStatus.NotOnTime)
-                {
-                    if (newStatus == OrderStatus.Completed)
-                    {
-                        order.Status = OrderStatus.CompletedNotOnTime;
-                    }
-                    else if (newStatus == OrderStatus.Canceled)
-                    {
-                        order.Status = newStatus;
-                    }
-                }
-                else
-                {
-                    order.Status = newStatus;
-                }
-            }
-
-            return order;
         }
     }
 }

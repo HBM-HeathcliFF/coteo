@@ -23,5 +23,35 @@ namespace coteo.Domain.Entities
         public string ExecutorId { get; set; }
         [ForeignKey("ExecutorId")]
         public ApplicationUser Executor { get; set; }
+
+
+        public void SetStatus(OrderStatus newStatus)
+        {
+            if (Status != OrderStatus.Canceled &&
+                Status != OrderStatus.Completed &&
+                Status != OrderStatus.CompletedNotOnTime)
+            {
+                if (newStatus == OrderStatus.Completed)
+                {
+                    Performed = DateTime.Now;
+                }
+
+                if (Status == OrderStatus.NotOnTime)
+                {
+                    if (newStatus == OrderStatus.Completed)
+                    {
+                        Status = OrderStatus.CompletedNotOnTime;
+                    }
+                    else if (newStatus == OrderStatus.Canceled)
+                    {
+                        Status = newStatus;
+                    }
+                }
+                else
+                {
+                    Status = newStatus;
+                }
+            }
+        }
     }
 }
