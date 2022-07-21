@@ -1,0 +1,27 @@
+﻿@model coteo.Models.CreateDepartmentModel
+@{
+    Layout = "_Layout";
+    ViewBag.Title = "Создание подразделения";
+}
+
+<div>
+	<form method="post">
+		<input type="hidden" name="CreatorId" value="@ViewBag.UserId"/>
+		<div class="form__text">
+			наименование подразделения
+		</div>
+		<div>
+			<input type="text" name="DepartmentName" placeholder="Введите наименование подразделения" class="form-1"/>
+		</div>
+		<div class="form__text">
+			руководитель подразделения
+		</div>
+		<div>
+			<input type="text" name="LeaderFullName" placeholder="Иванов Иван Иванович" class="form-1"/>
+		</div>
+		<button type="submit" class="button create">создать</button>
+		<div class="message-box">
+			<div class="text-danger" style="">@ViewBag.Message</div>
+		</div>
+	</form>
+</div>

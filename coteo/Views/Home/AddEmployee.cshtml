@@ -1,0 +1,21 @@
+﻿@model coteo.Models.AddEmployeeModel
+@{
+    Layout = "_Layout";
+    ViewBag.Title = "Добавление сотрудника";
+}
+
+<div>
+	<form method="post">
+		<input type="hidden" name="LeaderId" value="@ViewBag.UserId"/>
+		<div class="form__text">
+			ФИО сотрудника
+		</div>
+		<div>
+			<input type="text" name="EmployeeFullName" dirname="text" placeholder="Иванов Иван Иванович" class="form-1"/>
+		</div>
+		<button type="submit" class="button add">добавить сотрудника</button>
+		<div class="message-box">
+			<div class="text-danger" style="">@ViewBag.Message</div>
+		</div>
+	</form>
+</div>

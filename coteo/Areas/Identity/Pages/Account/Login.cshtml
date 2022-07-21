@@ -1,0 +1,54 @@
+﻿@page
+@model LoginModel
+
+@{
+    ViewData["Title"] = "Log in";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<link rel="stylesheet" href="~/css/auth.css" asp-append-version="true"/>
+
+<div class="form">
+      
+    <ul class="tab-group">
+		<li class="tab"><a href='/Identity/Account/Register'>Регистрация</a></li>
+		<li class="tab active"><a href='/Identity/Account/Login'>Авторизация</a></li>
+    </ul>
+    
+    <div class="tab-content">
+		
+		<div id="login">   
+			<h1>Авторизация</h1>
+			
+			<form id="account" method="post">
+                <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+				
+				<div class="field-wrap">
+					<label>
+						Email<span class="req">*</span>
+					</label>
+                    <input asp-for="Input.Email" type="email"required autocomplete="off"/>
+				</div>
+				
+				<div class="field-wrap">
+					<label>
+						Пароль<span class="req">*</span>
+					</label>
+                    <input asp-for="Input.Password" type="password"required autocomplete="off"/>
+				</div>
+
+                <input asp-for="Input.RememberMe"/>
+				
+				<button type="submit" class="button button-block"/>Войти</button>
+				
+			</form>
+	
+		</div>
+      
+    </div>
+    
+</div>
+
+@section Scripts {
+    <partial name="_ValidationScriptsPartial"/>
+}

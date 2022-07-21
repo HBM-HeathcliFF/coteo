@@ -1,0 +1,39 @@
+﻿@model coteo.Models.CreateOrderModel
+@{
+    Layout = "_Layout";
+    ViewBag.Title = "Создание поручения";
+}
+
+<div>
+	<form method="post">
+		<input type="hidden" name="CreatedById" value="@ViewBag.UserId"/>
+		<div class="form__text">
+			наименование поручения
+		</div>
+		<div>
+			<input type="text" name="OrderName" placeholder="Введите наименование поручение" class="form-1"/>
+		</div>
+		<div class="form__text">
+			ответственный исполнитель
+		</div>
+		<div>
+			<input type="text" name="ExecutorFullName" placeholder="Введите ответственного исполнителя" class="form-1"/>
+		</div>
+		<div class="form__text">
+			срок выполнения
+		</div>
+		<div>
+			<input type="text" name="Deadline" placeholder="YYYY-MM-DD" class="form-1"/>
+		</div>
+		<div class="form__text">
+			текст поручения
+		</div>
+		<div>
+			<textarea type="text" name="Text" class="form-2"/></textarea>
+		</div>
+		<button type="submit" class="button create">создать</button>
+		<div class="message-box">
+			<div class="text-danger" style="">@ViewBag.Message</div>
+		</div>
+	</form>
+</div>

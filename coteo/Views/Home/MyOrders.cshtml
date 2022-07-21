@@ -1,0 +1,78 @@
+﻿@model IEnumerable<coteo.Domain.Entities.Order>
+@{
+    ViewBag.Title = "Мои поручения";
+}
+
+@using coteo.Domain.Enum
+@using coteo.Domain.Extensions
+
+@if (Model != null && Model.Count() > 0)
+{
+    <div class="main-block__table">
+        <div id="getText"></div>
+        <table class="table__settings">
+            <tr>
+                <td class="table__border-th">Наименование поручения</td>
+                <td class="table__border-th">Дата выдачи</td>
+                <td class="table__border-th">Выдал поручение</td>
+                <td class="table__border-th">Ответственный исполнитель</td>
+                <td class="table__border-th">Срок выполнения (план)</td>
+                <td class="table__border-th">Срок выполнения (факт)</td>
+                <td class="table__border-th">Статус</td>
+            </tr>
+            @foreach (var item in Model)
+            {
+                <tr id="row_@item.Id" onclick="selectRow('@item.Id')" style="cursor: pointer">
+                    <td class="table__border-td">@item.Name</td>
+                    <td class="table__border-td">@item.CreationDate</td>
+                    <td class="table__border-td">@item.Creator.FullName</td>
+                    <td class="table__border-td">@item.Executor.FullName</td>
+                    <td class="table__border-td">@item.Deadline</td>
+                    <td class="table__border-td">@item.Performed</td>
+                    <td class="table__border-td">@item.Status.GetDisplayName()</td>
+                </tr>
+            }
+            <script>
+                var selected_row = "";
+                var prev_row = "";
+
+                function selectRow(name) {
+                    if (prev_row != "") {
+                        p_row = document.getElementById("row_" + prev_row);
+                        p_row.style.backgroundColor  = '#2C2C2C';
+                    }
+                    selected_row = name;
+                    element = document.getElementById("row_" + name);
+                    element.style.backgroundColor  = 'blue';
+                    document.getElementById("selectedRowC").value = selected_row;
+                    document.getElementById("selectedRowT").value = selected_row;
+                    prev_row = name;
+                }
+            </script>
+        </table>
+    </div>
+    <div class="buttons_panel_mo">
+        <div class="buttons">
+            <form class="form_orders" method="post">
+                <input type="hidden" name="id" id="selectedRowC"/>
+                <input type="hidden" name="status" value="@OrderStatus.Canceled"/>
+                <button type="submit" class="button cancel">отменить</button>
+            </form>
+            <form class="form_orders" asp-controller="Home" asp-action="GetText"
+                data-ajax="true"
+                data-ajax-method="POST"
+                data-ajax-mode="replace"
+                data-ajax-update="#getText"
+            >
+                <input type="hidden" name="id" id="selectedRowT"/>
+                <button type="submit" class="button get_text">текст</button>
+            </form>
+        </div>
+    </div>
+}
+else
+{
+    <div class="main-block__create">
+        <a>Вы не выдали ни одного поручения</a>
+    </div>
+}

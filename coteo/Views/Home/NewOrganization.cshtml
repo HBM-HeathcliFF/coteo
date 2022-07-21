@@ -1,0 +1,15 @@
+﻿@{
+	ViewBag.Title = "New organization";
+}
+
+<div class="main-block__create">
+    <div class="menu__create">
+	
+		<button class="link__button create_org" type="button" data-toggle="create_organization">Создать организацию</button>
+		или
+		<button class="link__button join_an_org" type="button" data-toggle="join_an_organization">присоединиться к организации</button>
+		
+		@await Html.PartialAsync("ModalWindowsPartial")
+		
+    </div>
+</div>

@@ -1,0 +1,31 @@
+﻿@model IEnumerable<coteo.Models.DepartmentInfoModel>
+@{
+	ViewBag.Title = "Список подразделений";
+}
+
+@if (Model.Count() > 0)
+{
+	<div class="main-block__table">
+		<table class="table__settings">
+			<tr>
+		        <th class="table__border-th">Наименование подразделения</th>
+		        <th class="table__border-th">Руководитель подразделения</th>
+				<th class="table__border-th">Число сотрудников</th>
+		    </tr>
+			@foreach (var item in Model)
+			{
+				<tr>
+					<td class="table__border-td">@item.DepartmentName</td>
+					<td class="table__border-td">@item.LeaderFullName</td>
+					<td class="table__border-td">@item.EmployeeCount</td>
+				</tr>
+			}
+		</table>
+	</div>
+}
+else
+{
+	<div class="main-block__create">
+		<a>В организации нет ни одного подразделения</a>
+	</div>
+}

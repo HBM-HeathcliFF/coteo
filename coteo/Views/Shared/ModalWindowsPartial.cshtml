@@ -1,0 +1,39 @@
+﻿<div class="modal-wrapper-create">
+    <div class="head"></div>
+    <div class="modal">
+        <div class="content">
+            <div class="good-job">
+                <p style="padding: 20px 0 0;color: gray;margin: 0;font-size: 14px;">СОЗДАТЬ ОРГАНИЗАЦИЮ</p>
+                <div class="text">
+                    <p></p>
+                </div>
+                <form class="form_modal_window_create" method="post">
+                    <input type="text" name="Name" placeholder="Название организации" required>
+                    <input type="hidden" name="Link" value="@ViewBag.Link">
+                    <input type="hidden" name="CreatorId" value="@ViewBag.UserId">
+                    <input class="create_btn" name="sub" type="submit" value="СОЗДАТЬ">
+                </form>
+                <div id="erconts_create"></div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="modal-wrapper-join">
+    <div class="head"></div>
+    <div class="modal">
+        <div class="content">
+            <div class="good-job">
+                <p style="padding: 20px 0 0;color: gray;margin: 0;font-size: 14px;">ПРИСОЕДИНИТЬСЯ К ОРГАНИЗАЦИИ</p>
+                <div class="text">
+                    <p></p>
+                </div>
+                <form class="form_modal_window_join" method="post">
+                    <input type="text" name="Link" placeholder="Код приглашения" required>
+                    <input class="join_btn" name="sub" type="submit" value="ВСТУПИТЬ">
+                </form>
+                <div id="erconts_join"></div>
+            </div>
+        </div>
+    </div>
+</div>
