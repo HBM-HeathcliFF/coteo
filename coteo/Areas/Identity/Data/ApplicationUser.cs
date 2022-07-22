@@ -24,4 +24,19 @@ public class ApplicationUser : IdentityUser
 
     public List<Order> MyOrders { get; set; } = new();
     public List<Order> IssuedToMeOrders { get; set; } = new();
+
+    public string GetShortName()
+    {
+        string[] words = FullName.Split(' ');
+        if (words.Length < 2 || words.Length > 3)
+        {
+            return "";
+        }
+        string shortName = words[0];
+        for (int i = 1; i < words.Length; i++)
+        {
+            shortName += $" {words[i][0]}.";
+        }
+        return shortName;
+    }
 }

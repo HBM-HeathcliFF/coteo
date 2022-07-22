@@ -20,7 +20,10 @@ namespace coteo.Domain.Repositories.EntityFramework
 
         public Organization? GetOrganizationById(string id)
         {
-            return _context.Organizations.FirstOrDefault(x => x.Id == id);
+            return _context.Organizations
+                .Include(u => u.Departments)
+                .ToList()
+                .FirstOrDefault(x => x.Id == id);
         }
 
         public IQueryable<Organization> GetOrganizations()

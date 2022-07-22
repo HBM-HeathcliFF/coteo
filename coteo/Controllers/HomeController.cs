@@ -32,8 +32,7 @@ namespace coteo.Controllers
         [HttpGet]
         public IActionResult MyOrders()
         {
-            var users = _dataManager.Users.GetUsers().Include(u => u.MyOrders).ToList();
-            var user = users.FirstOrDefault(x => x.Id == _userManager.GetUserId(User));
+            var user = _dataManager.Users.GetUserById(_userManager.GetUserId(User));
 
             return GetView(new List<UserRole> { UserRole.User, UserRole.Employee }, "/Home/Index", user?.MyOrders);
         }
@@ -41,8 +40,7 @@ namespace coteo.Controllers
         [HttpGet]
         public IActionResult IssuedToMe()
         {
-            var users = _dataManager.Users.GetUsers().Include(u => u.IssuedToMeOrders).ToList();
-            var user = users.FirstOrDefault(x => x.Id == _userManager.GetUserId(User));
+            var user = _dataManager.Users.GetUserById(_userManager.GetUserId(User));
 
             return GetView(new List<UserRole> { UserRole.User, UserRole.Creator }, "/Home/Index", user?.IssuedToMeOrders);
         }
@@ -62,31 +60,26 @@ namespace coteo.Controllers
         [HttpGet]
         public IActionResult ListOfDepartments()
         {
-            var organizationId = _dataManager.Users.GetUserById(_userManager.GetUserId(User)).OrganizationId;
-            if (organizationId != null)
-			{
-                List<DepartmentInfoModel> departmentList = new();
-                var departments = _dataManager.Departments.GetDepartments().Where(x => x.OrganizationId == organizationId);
-                foreach (var department in departments)
-                {
-                    string departmentName = department.Name;
-                    string leaderFullName = _dataManager.Users.GetUserById(department.LeaderId).FullName;
-                    int employeeCount = _dataManager.Users.GetUsers().Where(x => x.DepartmentId == department.Id).Count();
+            var user = _dataManager.Users.GetUserById(_userManager.GetUserId(User));
+            var organization = _dataManager.Organizations.GetOrganizationById(user.OrganizationId);
 
+            List<DepartmentInfoModel> departmentList = null;
+
+            if (organization != null)
+			{
+                departmentList = new();
+                foreach (var department in organization.Departments)
+                {
                     departmentList.Add(new DepartmentInfoModel()
                     {
-                        DepartmentName = departmentName,
-                        LeaderFullName = leaderFullName,
-                        EmployeeCount = employeeCount
+                        DepartmentName = department.Name,
+                        LeaderFullName = _dataManager.Users.GetUserById(department.LeaderId).FullName,
+                        EmployeeCount = _dataManager.Users.GetUsers().Where(x => x.DepartmentId == department.Id).Count()
                     });
                 }
+            }
 
-                return GetView(new List<UserRole> { UserRole.User }, "/Home/NewOrganization", departmentList);
-            }
-            else
-			{
-                return GetView<int>(new List<UserRole> { UserRole.User }, "/Home/NewOrganization");
-            }
+            return GetView(new List<UserRole> { UserRole.User }, "/Home/NewOrganization", departmentList);
         }
 
         [HttpGet]
@@ -98,29 +91,28 @@ namespace coteo.Controllers
         [HttpGet]
         public IActionResult NewOrganization()
         {
-            return GetView<int>(new List<UserRole> { UserRole.Employee, UserRole.Leader, UserRole.Creator }, "/Home/Index");
+            return GetView<int>(new List<UserRole> { UserRole.Employee, UserRole.Leader, UserRole.Creator },
+                "/Home/Index");
         }
 
         [HttpGet]
         public IActionResult LeaveTheOrganization()
         {
-            string userId = _userManager.GetUserId(User);
-            UserRole userRole = _dataManager.Users.GetUserById(userId).Role;
+            var user = _dataManager.Users.GetUserById(_userManager.GetUserId(User));
+            var organization = _dataManager.Organizations.GetOrganizationById(user.OrganizationId);
 
-            var organization = _dataManager.Users.GetUserById(userId).Organization;
             if (organization == null)
             {
                 return Redirect("/Home/NewOrganization");
             }
-
-            ApplicationUser user = _dataManager.Users.GetUserById(userId);
+            
             user.OrganizationId = null;
             user.DepartmentId = null;
             user.Role = UserRole.User;
 
             _dataManager.Users.SaveUser(user);
 
-            if (userRole == UserRole.Creator)
+            if (user.Role == UserRole.Creator)
             {
                 var users = _dataManager.Users.GetUsers().Where(x => x.OrganizationId == organization.Id);
                 foreach (var usr in users)
@@ -140,7 +132,7 @@ namespace coteo.Controllers
         [HttpPost]
         public IActionResult NewOrganization(Organization organization)
         {
-            ApplicationUser user = _dataManager.Users.GetUserById(_userManager.GetUserId(User));
+            var user = _dataManager.Users.GetUserById(_userManager.GetUserId(User));
 
             if (_dataManager.Organizations.GetOrganizations().FirstOrDefault(x => x.Link == organization.Link) != null)
             {
@@ -285,31 +277,29 @@ namespace coteo.Controllers
         [HttpPost]
         public IActionResult MyOrders(OrderStatusModel model)
         {
-            Order order = _dataManager.Orders.GetOrderById(model.Id);
+            var order = _dataManager.Orders.GetOrderById(model.Id);
             order.SetStatus(model.Status);
 
             _dataManager.Orders.SaveOrder(order);
             _dataManager.SaveChanges();
 
-            var users = _dataManager.Users.GetUsers().Include(u => u.MyOrders).ToList();
-            var user = users.FirstOrDefault(x => x.Id == _userManager.GetUserId(User));
+            var user = _dataManager.Users.GetUserById(_userManager.GetUserId(User));
 
-            return GetView(new List<UserRole> { UserRole.User, UserRole.Employee }, "/Home/Index", user?.MyOrders);
+            return GetView(new List<UserRole> { UserRole.User, UserRole.Employee }, "/Home/Index", user.MyOrders);
         }
 
         [HttpPost]
         public IActionResult IssuedToMe(OrderStatusModel model)
         {
-            Order order = _dataManager.Orders.GetOrderById(model.Id);
+            var order = _dataManager.Orders.GetOrderById(model.Id);
             order.SetStatus(model.Status);
 
             _dataManager.Orders.SaveOrder(order);
             _dataManager.SaveChanges();
 
-            var users = _dataManager.Users.GetUsers().Include(u => u.IssuedToMeOrders).ToList();
-            var user = users.FirstOrDefault(x => x.Id == _userManager.GetUserId(User));
+            var user = _dataManager.Users.GetUserById(_userManager.GetUserId(User));
 
-            return GetView(new List<UserRole> { UserRole.User, UserRole.Creator }, "/Home/Index", user?.IssuedToMeOrders);
+            return GetView(new List<UserRole> { UserRole.User, UserRole.Creator }, "/Home/Index", user.IssuedToMeOrders);
         }
 
         [HttpPost]
@@ -319,40 +309,37 @@ namespace coteo.Controllers
             return View();
         }
 
-        private void FillViewBag(string userId, UserRole userRole)
+        private void FillViewBag(ApplicationUser user)
         {
-            string shortName = _dataManager.Users.GetShortNameById(userId);
-            var organizationId = _dataManager.Users.GetUserById(userId).OrganizationId;
-
-            if (organizationId != null)
+            if (user.OrganizationId != null)
             {
-                ViewBag.OrganizationName = _dataManager.Organizations.GetOrganizationById(organizationId).Name;
-                ViewBag.Link = _dataManager.Organizations.GetOrganizationById(organizationId).Link;
+                var organization = _dataManager.Organizations.GetOrganizationById(user.OrganizationId);
+                ViewBag.OrganizationName = organization.Name;
+                ViewBag.Link = organization.Link;
             }
             else
             {
                 ViewBag.Link = Convert.ToBase64String(Encoding.UTF8.GetBytes(Guid.NewGuid().ToString())).Remove(30);
             }
 
-            ViewBag.UserId = userId;
-            ViewBag.ShortName = shortName;
-            ViewBag.UserRole = userRole;
+            ViewBag.UserId = user.Id;
+            ViewBag.ShortName = user.GetShortName();
+            ViewBag.UserRole = user.Role;
         }
 
         private IActionResult GetView<T>(List<UserRole> accessDeniedRole, string redirectPage, IEnumerable<T>? model = null)
         {
-            string userId = _userManager.GetUserId(User);
-            UserRole userRole = _dataManager.Users.GetUserById(userId).Role;
+            var user = _dataManager.Users.GetUserById(_userManager.GetUserId(User));
 
             foreach (var role in accessDeniedRole)
             {
-                if (userRole == role)
+                if (user.Role == role)
                 {
                     return Redirect(redirectPage);
                 }
             }
 
-            FillViewBag(userId, userRole);
+            FillViewBag(user);
 
             if (model == null)
 			{

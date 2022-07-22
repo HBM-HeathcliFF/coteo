@@ -18,33 +18,13 @@ namespace coteo.Domain.Repositories.EntityFramework
             _context.Users.Remove(new ApplicationUser() { Id = id });
         }
 
-        public string? GetShortNameById(string id)
-        {
-            var user = _context.Users.FirstOrDefault(x => x.Id == id);
-            if (user != null)
-            {
-                string[] words = user.FullName.Split(' ');
-                if (words.Length < 2 || words.Length > 3)
-                {
-                    return null;
-                }
-                string shortName = words[0];
-                for (int i = 1; i < words.Length; i++)
-                {
-                    shortName += $" {words[i][0]}.";
-                }
-                return shortName;
-            }
-            else
-            {
-                return null;
-            }
-            
-        }
-
         public ApplicationUser? GetUserById(string id)
         {
-            return _context.Users.FirstOrDefault(x => x.Id == id);
+            return _context.Users
+                .Include(u => u.MyOrders)
+                .Include(u => u.IssuedToMeOrders)
+                .ToList()
+                .FirstOrDefault(x => x.Id == id);
         }
 
         public IQueryable<ApplicationUser> GetUsers()
