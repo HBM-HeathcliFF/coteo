@@ -1,5 +1,4 @@
-﻿using coteo.Areas.Identity.Data;
-using coteo.Domain.Enum;
+﻿using coteo.Domain.Enum;
 using System.ComponentModel.DataAnnotations.Schema;
 
 namespace coteo.Domain.Entities
@@ -18,11 +17,11 @@ namespace coteo.Domain.Entities
 
         public string CreatedById { get; set; }
         [ForeignKey("CreatorId")]
-        public ApplicationUser Creator { get; set; }
+        public User Creator { get; set; }
 
         public string ExecutorId { get; set; }
         [ForeignKey("ExecutorId")]
-        public ApplicationUser Executor { get; set; }
+        public User Executor { get; set; }
 
 
         public void SetStatus(OrderStatus newStatus)

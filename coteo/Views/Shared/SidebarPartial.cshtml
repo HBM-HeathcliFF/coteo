@@ -1,12 +1,13 @@
-﻿@using coteo.Areas.Identity.Data
-@using Microsoft.AspNetCore.Identity
+﻿@using Microsoft.AspNetCore.Identity
+@using coteo.Domain.Entities
 @using coteo.Domain.Enum
+@using static coteo.SeedData;
 
-@inject SignInManager<ApplicationUser> SignInManager
+@inject SignInManager<User> SignInManager
 
 @if (SignInManager.IsSignedIn(User))
 {
-	@if (ViewBag.UserRole != UserRole.User)
+	@if (ViewBag.IntermediatePage is null && ViewBag.UserRole != RoleNames.User)
 	{
 	    <div class="nav__menu">
 		    <div class="nav__menu-header">
@@ -15,35 +16,35 @@
 			<div class="menu">
 				<a><li class="menu__list">Поручения</li></a>
 			    <ul class="menu__all">
-					@if (ViewBag.UserRole != UserRole.Employee)
+					@if (ViewBag.UserRole != RoleNames.Employee)
 					{
 						<a asp-area="" asp-controller="Home" asp-action="MyOrders"><li class="menu__drop">Мои поручения</li></a>
 					}
-					@if (ViewBag.UserRole != UserRole.Creator)
+					@if (ViewBag.UserRole != RoleNames.Creator)
 					{
 						<a asp-area="" asp-controller="Home" asp-action="IssuedToMe"><li class="menu__drop">Выданные мне</li></a>
 					}
-					@if (ViewBag.UserRole == UserRole.Leader)
+					@if (ViewBag.UserRole == RoleNames.Leader)
 					{
 						<a asp-area="" asp-controller="Home" asp-action="CreateOrder"><li class="menu__drop">Создать поручение</li></a>
 					}
 			    </ul>
 				<a><li class="menu__list">Подразделения</li></a>
 				<ul class="menu__all">
-					@if (ViewBag.UserRole == UserRole.Creator)
+					@if (ViewBag.UserRole == RoleNames.Creator)
 					{
 						<a asp-area="" asp-controller="Home" asp-action="CreateDepartment"><li class="menu__drop">Создать подразделение</li></a>
 					}
 			        <a asp-area="" asp-controller="Home" asp-action="ListOfDepartments"><li class="menu__drop">Список подразделений</li></a>
-					@if (ViewBag.UserRole == UserRole.Leader)
+					@if (ViewBag.UserRole == RoleNames.Leader)
 					{
 						<a asp-area="" asp-controller="Home" asp-action="AddEmployee"><li class="menu__drop">Добавить сотрудника</li></a>
 					}
 			    </ul>
 				<a><li class="menu__list">Организация</li></a>
 				<ul class="menu__all">
-					<a asp-area="" asp-controller="Home" asp-action="LeaveTheOrganization"><li class="menu__drop">Покинуть организацию</li></a>
 					<a href="" onclick="prompt('Ссылка на организацию', '@ViewBag.Link')" language="Javascript"><li class="menu__drop">Получить ссылку</li></a>
+					<a asp-area="" asp-controller="Home" asp-action="LeaveTheOrganization"><li class="menu__drop">Покинуть организацию</li></a>
 			    </ul>
 			</div>
 		</div>

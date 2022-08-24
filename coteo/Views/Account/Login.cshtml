@@ -1,9 +1,6 @@
-﻿@page
-@model LoginModel
-
+﻿@model coteo.ViewModels.LoginViewModel
 @{
-    ViewData["Title"] = "Log in";
-    Layout = "~/Views/Shared/_Layout.cshtml";
+    ViewBag.Title = "Авторизация";
 }
 
 <link rel="stylesheet" href="~/css/auth.css" asp-append-version="true"/>
@@ -11,8 +8,8 @@
 <div class="form">
       
     <ul class="tab-group">
-		<li class="tab"><a href='/Identity/Account/Register'>Регистрация</a></li>
-		<li class="tab active"><a href='/Identity/Account/Login'>Авторизация</a></li>
+		<li class="tab"><a href='/Account/Register'>Регистрация</a></li>
+		<li class="tab active"><a href='/Account/Login'>Авторизация</a></li>
     </ul>
     
     <div class="tab-content">
@@ -20,24 +17,25 @@
 		<div id="login">   
 			<h1>Авторизация</h1>
 			
-			<form id="account" method="post">
+			<form method="post" asp-controller="Account" asp-action="Login"
+				asp-route-returnUrl="@Model.ReturnUrl">
                 <div asp-validation-summary="ModelOnly" class="text-danger"></div>
 				
 				<div class="field-wrap">
 					<label>
 						Email<span class="req">*</span>
 					</label>
-                    <input asp-for="Input.Email" type="email"required autocomplete="off"/>
+                    <input asp-for="Email" type="email"required autocomplete="off"/>
 				</div>
 				
 				<div class="field-wrap">
 					<label>
 						Пароль<span class="req">*</span>
 					</label>
-                    <input asp-for="Input.Password" type="password"required autocomplete="off"/>
+                    <input asp-for="Password" type="password"required autocomplete="off"/>
 				</div>
 
-                <input asp-for="Input.RememberMe"/>
+                <input asp-for="RememberMe"/>
 				
 				<button type="submit" class="button button-block"/>Войти</button>
 				
@@ -48,7 +46,3 @@
     </div>
     
 </div>
-
-@section Scripts {
-    <partial name="_ValidationScriptsPartial"/>
-}

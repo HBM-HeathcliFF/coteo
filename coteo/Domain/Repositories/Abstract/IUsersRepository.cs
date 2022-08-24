@@ -1,12 +1,12 @@
-﻿using coteo.Areas.Identity.Data;
+﻿using coteo.Domain.Entities;
 
 namespace coteo.Domain.Repositories.Abstract
 {
     public interface IUsersRepository
     {
-        IQueryable<ApplicationUser> GetUsers();
-        ApplicationUser? GetUserById(string id);
-        void SaveUser(ApplicationUser entity);
+        IQueryable<User> GetUsers();
+        User? GetUserById(string id);
+        void SaveUser(User entity);
         void DeleteUser(string id);
     }
 }

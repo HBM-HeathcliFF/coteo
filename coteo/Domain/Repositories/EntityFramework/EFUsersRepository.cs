@@ -1,4 +1,4 @@
-﻿using coteo.Areas.Identity.Data;
+﻿using coteo.Domain.Entities;
 using coteo.Domain.Repositories.Abstract;
 using Microsoft.EntityFrameworkCore;
 
@@ -15,10 +15,10 @@ namespace coteo.Domain.Repositories.EntityFramework
 
         public void DeleteUser(string id)
         {
-            _context.Users.Remove(new ApplicationUser() { Id = id });
+            _context.Users.Remove(new User() { Id = id });
         }
 
-        public ApplicationUser? GetUserById(string id)
+        public User? GetUserById(string id)
         {
             return _context.Users
                 .Include(u => u.MyOrders)
@@ -27,12 +27,12 @@ namespace coteo.Domain.Repositories.EntityFramework
                 .FirstOrDefault(x => x.Id == id);
         }
 
-        public IQueryable<ApplicationUser> GetUsers()
+        public IQueryable<User> GetUsers()
         {
             return _context.Users;
         }
 
-        public void SaveUser(ApplicationUser entity)
+        public void SaveUser(User entity)
         {
             if (entity.Id == default)
                 _context.Entry(entity).State = EntityState.Added;

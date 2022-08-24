@@ -1,5 +1,4 @@
-﻿using coteo.Areas.Identity.Data;
-using coteo.Domain.Entities;
+﻿using coteo.Domain.Entities;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
@@ -8,9 +7,9 @@ namespace coteo.Domain
 {
     public class AppDbContext : IdentityDbContext<IdentityUser>
     {
-        public AppDbContext(DbContextOptions<AppDbContext> options) : base(options) { }
+        public AppDbContext(DbContextOptions<AppDbContext> options) : base(options) {}
 
-        public DbSet<ApplicationUser> Users { get; set; }
+        public DbSet<User> Users { get; set; }
         public DbSet<Organization> Organizations { get; set; }
         public DbSet<Department> Departments { get; set; }
         public DbSet<Order> Orders { get; set; }
