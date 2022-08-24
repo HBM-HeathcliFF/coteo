@@ -12,7 +12,7 @@ using coteo.Domain;
 namespace coteo.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    [Migration("20220721082140_Initial")]
+    [Migration("20220821091415_Initial")]
     partial class Initial
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -274,12 +274,10 @@ namespace coteo.Migrations
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityUserLogin<string>", b =>
                 {
                     b.Property<string>("LoginProvider")
-                        .HasMaxLength(128)
-                        .HasColumnType("nvarchar(128)");
+                        .HasColumnType("nvarchar(450)");
 
                     b.Property<string>("ProviderKey")
-                        .HasMaxLength(128)
-                        .HasColumnType("nvarchar(128)");
+                        .HasColumnType("nvarchar(450)");
 
                     b.Property<string>("ProviderDisplayName")
                         .HasColumnType("nvarchar(max)");
@@ -316,12 +314,10 @@ namespace coteo.Migrations
                         .HasColumnType("nvarchar(450)");
 
                     b.Property<string>("LoginProvider")
-                        .HasMaxLength(128)
-                        .HasColumnType("nvarchar(128)");
+                        .HasColumnType("nvarchar(450)");
 
                     b.Property<string>("Name")
-                        .HasMaxLength(128)
-                        .HasColumnType("nvarchar(128)");
+                        .HasColumnType("nvarchar(450)");
 
                     b.Property<string>("Value")
                         .HasColumnType("nvarchar(max)");
@@ -331,7 +327,7 @@ namespace coteo.Migrations
                     b.ToTable("AspNetUserTokens", (string)null);
                 });
 
-            modelBuilder.Entity("coteo.Areas.Identity.Data.ApplicationUser", b =>
+            modelBuilder.Entity("coteo.Domain.Entities.User", b =>
                 {
                     b.HasBaseType("Microsoft.AspNetCore.Identity.IdentityUser");
 
@@ -351,12 +347,12 @@ namespace coteo.Migrations
                         .IsRequired()
                         .HasColumnType("nvarchar(30)");
 
-                    b.HasDiscriminator().HasValue("ApplicationUser");
+                    b.HasDiscriminator().HasValue("User");
                 });
 
             modelBuilder.Entity("coteo.Domain.Entities.Department", b =>
                 {
-                    b.HasOne("coteo.Areas.Identity.Data.ApplicationUser", "Leader")
+                    b.HasOne("coteo.Domain.Entities.User", "Leader")
                         .WithOne("Department")
                         .HasForeignKey("coteo.Domain.Entities.Department", "LeaderId")
                         .OnDelete(DeleteBehavior.ClientCascade)
@@ -375,13 +371,13 @@ namespace coteo.Migrations
 
             modelBuilder.Entity("coteo.Domain.Entities.Order", b =>
                 {
-                    b.HasOne("coteo.Areas.Identity.Data.ApplicationUser", "Creator")
+                    b.HasOne("coteo.Domain.Entities.User", "Creator")
                         .WithMany("MyOrders")
                         .HasForeignKey("CreatorId")
                         .OnDelete(DeleteBehavior.ClientCascade)
                         .IsRequired();
 
-                    b.HasOne("coteo.Areas.Identity.Data.ApplicationUser", "Executor")
+                    b.HasOne("coteo.Domain.Entities.User", "Executor")
                         .WithMany("IssuedToMeOrders")
                         .HasForeignKey("ExecutorId")
                         .OnDelete(DeleteBehavior.ClientCascade)
@@ -394,7 +390,7 @@ namespace coteo.Migrations
 
             modelBuilder.Entity("coteo.Domain.Entities.Organization", b =>
                 {
-                    b.HasOne("coteo.Areas.Identity.Data.ApplicationUser", "Creator")
+                    b.HasOne("coteo.Domain.Entities.User", "Creator")
                         .WithOne("Organization")
                         .HasForeignKey("coteo.Domain.Entities.Organization", "CreatorId")
                         .OnDelete(DeleteBehavior.ClientCascade)
@@ -459,7 +455,7 @@ namespace coteo.Migrations
                     b.Navigation("Departments");
                 });
 
-            modelBuilder.Entity("coteo.Areas.Identity.Data.ApplicationUser", b =>
+            modelBuilder.Entity("coteo.Domain.Entities.User", b =>
                 {
                     b.Navigation("Department")
                         .IsRequired();

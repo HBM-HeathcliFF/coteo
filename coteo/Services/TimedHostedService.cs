@@ -1,5 +1,6 @@
 ﻿using coteo.Domain;
 using coteo.Domain.Enum;
+using coteo.Services;
 
 public class TimedHostedService : IHostedService, IDisposable
 {
@@ -40,10 +41,25 @@ public class TimedHostedService : IHostedService, IDisposable
                     order.Status != OrderStatus.Canceled &&
                     order.Status != OrderStatus.NotOnTime)
                 {
-                    if (order.Deadline < DateTime.Now)
+                    if (order.Deadline.Day - DateTime.Now.Day == 1 &&
+                        order.Deadline.Minute == DateTime.Now.Minute)
+                    {
+                        var user = _dataManager.Users.GetUserById(order.ExecutorId);
+
+                        EmailService emailService = new EmailService();
+                        emailService.SendEmailAsync(user.Email, "Истекает срок выполнения поручения",
+                              $"Через 1 день срок выполнения поручения \"{order.Name}\" подойдёт к концу.");
+                    }
+                    else if (order.Deadline < DateTime.Now)
                     {
                         order.Status = OrderStatus.NotOnTime;
                         _dataManager.Orders.SaveOrder(order);
+
+                        var user = _dataManager.Users.GetUserById(order.ExecutorId);
+
+                        EmailService emailService = new EmailService();
+                        emailService.SendEmailAsync(user.Email, "Просрочено поручение",
+                              $"Срок выполнения поручения \"{order.Name}\" подошёл к концу.");
                     }
                 }
             }

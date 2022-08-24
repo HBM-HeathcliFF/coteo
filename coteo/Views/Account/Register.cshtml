@@ -1,8 +1,6 @@
-﻿@page
-@model RegisterModel
+﻿@model coteo.ViewModels.RegisterViewModel
 @{
-    ViewData["Title"] = "Register";
-    Layout = "~/Views/Shared/_Layout.cshtml";
+    ViewBag.Title = "Регистрация";
 }
 
 <link rel="stylesheet" href="~/css/auth.css" asp-append-version="true"/>
@@ -10,29 +8,29 @@
 <div class="form">
       
     <ul class="tab-group">
-		<li class="tab active"><a href='/Identity/Account/Register'>Регистрация</a></li>
-		<li class="tab"><a href='/Identity/Account/Login'>Авторизация</a></li>
+		<li class="tab active"><a href='/Account/Register'>Регистрация</a></li>
+		<li class="tab"><a href='/Account/Login'>Авторизация</a></li>
     </ul>
     
     <div class="tab-content">
 		<div id="signup">   
 			<h1>Регистрация</h1>
 			
-			<form asp-route-returnUrl="@Model.ReturnUrl" method="post">
-                <div asp-validation-summary="All" class="text-danger"></div>
+			<form method="post" asp-controller="Account" asp-action="Register">
+                <div asp-validation-summary="ModelOnly" class="text-danger"></div>
 				
 				<div class="field-wrap">
 					<label>
 						Полное имя<span class="req">*</span>
 					</label>
-                    <input asp-for="Input.FullName" type="text" required autocomplete="off"/>
+                    <input asp-for="FullName" type="text" required autocomplete="off"/>
 				</div>
 		
 				<div class="field-wrap">
 					<label>
 						Email<span class="req">*</span>
 					</label>
-                    <input asp-for="Input.Email" type="email"required autocomplete="off"/>
+                    <input asp-for="Email" type="email"required autocomplete="off"/>
 				</div>
 				
 				<div class="top-row">
@@ -40,14 +38,14 @@
 						<label>
 							Введите пароль<span class="req">*</span>
 						</label>
-                        <input asp-for="Input.Password" type="password"required autocomplete="off"/>
+                        <input asp-for="Password" type="password"required autocomplete="off"/>
 					</div>
 				
 					<div class="field-wrap">
 						<label>
 							Повторите пароль<span class="req">*</span>
 						</label>
-                        <input asp-for="Input.ConfirmPassword" type="password"required autocomplete="off"/>
+                        <input asp-for="PasswordConfirm" type="password"required autocomplete="off"/>
 					</div>
 				</div>
 				
@@ -60,7 +58,3 @@
     </div>
     
 </div>
-
-@section Scripts {
-    <partial name="_ValidationScriptsPartial"/>
-}

@@ -1,5 +1,4 @@
-﻿using coteo.Areas.Identity.Data;
-using System.ComponentModel.DataAnnotations.Schema;
+﻿using System.ComponentModel.DataAnnotations.Schema;
 
 namespace coteo.Domain.Entities
 {
@@ -10,7 +9,7 @@ namespace coteo.Domain.Entities
 
         public string CreatorId { get; set; }
         [ForeignKey("CreatorId")]
-        public ApplicationUser Creator { get; set; }
+        public User Creator { get; set; }
 
         public List<Department> Departments { get; set; } = new();
     }
